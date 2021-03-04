@@ -1,8 +1,15 @@
 # Bucket to store website
 resource "google_storage_bucket" "website" {
   provider = google
-  name     = "coffeetime-website"
+  name     = "coffeetime-website-deepuphallo"
   location = "US"
+  versioning {
+    enabled = true
+  }
+  website {
+    main_page_suffix = "hallo.html"
+    not_found_page   = "hallo.html"
+  }
 }
 
 # Make new objects public
@@ -18,19 +25,19 @@ resource "google_compute_global_address" "website" {
   name     = "website-lb-ip"
 }
 
-# Get the managed DNS zone
-data "google_dns_managed_zone" "gcp_coffeetime_dev" {
-  provider = google
-  name     = "gcp-coffeetime-dev"
+resource "google_dns_managed_zone" "gcp_coffeetime_dev" {
+  name        = "coffeetime-dev"
+  dns_name    = "hallo.test.andreaskluth.net."
+  description = "Example DNS zone"
 }
 
 # Add the IP to the DNS
 resource "google_dns_record_set" "website" {
   provider     = google
-  name         = "website.${data.google_dns_managed_zone.gcp_coffeetime_dev.dns_name}"
+  name         = "website.${google_dns_managed_zone.gcp_coffeetime_dev.dns_name}"
   type         = "A"
   ttl          = 300
-  managed_zone = data.google_dns_managed_zone.gcp_coffeetime_dev.name
+  managed_zone = google_dns_managed_zone.gcp_coffeetime_dev.name
   rrdatas      = [google_compute_global_address.website.address]
 }
 
@@ -40,7 +47,8 @@ resource "google_compute_backend_bucket" "website" {
   name        = "website-backend"
   description = "Contains files needed by the website"
   bucket_name = google_storage_bucket.website.name
-  enable_cdn  = true
+  enable_cdn  = false
+
 }
 
 # Create HTTPS certificate

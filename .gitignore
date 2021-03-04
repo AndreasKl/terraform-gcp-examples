@@ -7,3 +7,5 @@
 
 # GCP authent
 *account.json
+
+.terraform.lock.hcl

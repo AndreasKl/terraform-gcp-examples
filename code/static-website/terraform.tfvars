@@ -1,3 +1,3 @@
-gcp_svc_key = "../account.json"
-gcp_project = "my-gcp-project"
-gcp_region = "us-east1"
+gcp_svc_key = "/home/andreaskluth/sc/platform-cloud-setup/infrastructure/terraform/.service-account.json"
+gcp_project = "deepup-developers-sandbox"
+gcp_region  = "europe-west1"
